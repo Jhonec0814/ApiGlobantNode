@@ -1,58 +1,85 @@
+import { ServicioReserva } from "../services/ServicioReserva.js"
+
 export class ControladorReserva{
 
 
     constructor(){}
 
-    insertar(request,response){
-
-        //Recibir los datos de pa peticion
-
+    insertar(request,response){ //Recibir los datos de pa peticion
+        let servicio = new ServicioReserva()
         let datosReserva=request.body//Recibo datos
 
-        //Conectar base datos
-
-        //Ejecutar la consulta(decirle que metodo debe utilizar)
-
-        //Envio la respuesta
-        response.status(200).json({
-            mensaje:"Exito en el ingreso de la reserva",
-            datosIngresados:datosReserva,
-            estado:true
-        })
+        try{
+            await servicio.registrar(datosReserva)
+            response.status(200).json({
+                mensaje:"exito en el ingreso de datos",
+                datosIngresados:[],
+                estado:true
+            })
+            }catch(error){
+                response.status(400).json({
+                    mensaje:"fallo en el ingreso de datos",
+                    datosIngresados:[],
+                    estado:false
+                })
+            }
     }
 
     buscarPorId(request,response){
+        let servicio = new ServicioReserva()
         let id=request.params.id//Id que llega por la URL
 
-        response.status(200).json({
-            mensaje:"Exito buscando reserva por ID ",
-            datos:"Datos reserva por id: "+id,
-            estado:true
-        })
+        try{
+            response.status(200).json({
+                mensaje:"exito buscando reserva por id",
+                datos:await servicio.buscarPorId(id),
+                estado:true
+            })
+            }catch(error){
+            response.status(400).json({
+                mensaje:"fallamos buscando reserva por id",
+                datos:[],
+                estado:false
+                })
+            }
     }
 
     editar(request,response){
+        let servicio = new ServicioReserva()
         let id=request.params.id //id que llega por la URL
         let datosReserva=request.body //RECIBE DEL BODY
-
-        response.status(200).json({
-            mensaje:"Exito editando la reserva por ID ",
-            datos:"Datos del id: "+id,
-            estado:true
-        })
-    
+        try{
+            await servicio.editar(id,datosReserva)
+            response.status(200).json({
+                mensaje:"exito editando reserva por id",
+                datos:"Datos del id: "+id,
+                estado:true
+            })
+            }catch(error){
+                response.status(400).json({
+                    mensaje:"fallamos editando reserva por id",
+                    datos:[],
+                    estado:false
+                })
+            }     
     }
 
     eliminar(request,response){
+        let servicio = new ServicioReserva()
         let id=request.params.id //id que llega por la URL
-        
-        response.status(200).json({
-            mensaje:"Exito eliminando la reserva por ID ",
+        try{
+            await servicio.eliminar(id)
+            response.status(200).json({
+            mensaje:"exito eliminando reserva por id",
             datos:"Datos del id: "+id,
             estado:true
         })
+        }catch(error){
+            response.status(400).json({
+                mensaje:"fallamos eliminando reserva por id",
+                datos:[],
+                estado:false
+            })
+        }
     }
-
-
-
 }
